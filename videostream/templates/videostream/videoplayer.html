@@ -1,0 +1,31 @@
+{% extends 'videostream/base.html' %}
+
+{% block css_links %}
+    <link href="http://vjs.zencdn.net/5.10.2/video-js.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <h1 class="center-align">Video Player</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <video id="my_video_1" class="video-js vjs-default-skin center-align" controls preload="auto" width="640" height="268"
+                data-setup='{}' crossorigin='anonymous'>
+                  <source crossorigin='anonymous' src="http://d2zi1eot6cm0a8.cloudfront.net/transcoded/MFSE3E20/e3f7b4002929f908bdbde04ac3b70613eb45c983ef432cd5bece5275f32465f6/hls_e3f7b4002929f908bdbde04ac3b70613eb45c983ef432cd5bece5275f32465f6.m3u8" type="application/x-mpegURL">
+                </video>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="http://vjs.zencdn.net/5.10.2/video.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/4.0.1/videojs-contrib-hls.js"></script>
+{% endblock %}
