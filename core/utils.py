@@ -38,32 +38,68 @@ def getChildren(folder):
                 getChildren(folder['children'][section])
 
 
-def getFileTree():
+def getFileTree(root='transcoded/'):
     client = boto3.client('s3')
+    # s3 = boto3.resource('s3')
+    # bucket = s3.Bucket('streamingproject.hls')
 
     cloudfront_prefix = 'http://d2zi1eot6cm0a8.cloudfront.net/'
 
+    # l = list(bucket.objects.filter(Prefix='transcoded/', Delimiter='/'))
+    # print('LIST:', l)
+
     kwargs = {
         'Bucket': 'streamingproject.hls',
-        'MaxKeys': 10,
-        'Prefix': 'transcoded/'
+        'MaxKeys': 100,
+        'Prefix': root,
+        'Delimiter': '/'
     }
-    response = client.list_objects_v2(**kwargs)
-    objects = [obj for obj in response['Contents']]
-    keys = [obj['Key'] for obj in objects]
-    explorer = {}
-    for key in keys:
-        section = key.split('/')[0]
-        if section not in explorer.keys():
-            explorer[section] = {
-                'name': section,
-                'url_ext': section,
-                'url': cloudfront_prefix + section,
-                'children': {}
-            }
-            getChildren(explorer[section])
 
-    print("EXPLORER:", explorer)
+    paginator = client.get_paginator('list_objects_v2')
+    l = list(paginator.paginate(**kwargs))[0].keys()
+    explorer = {}
+    for result in paginator.paginate(**kwargs):
+        for prefix in result.get('CommonPrefixes'):
+            path = prefix.get('Prefix')[len(root):]
+            explorer[path] = {
+                'name': path,
+                'url_prefix': root + path,
+                'url': cloudfront_prefix + root + path
+            }
+
+            print(path)
+
+    # response = client.list_objects_v2(**kwargs)
+    # objects = [obj for obj in response['Contents']]
+    # keys = [obj['Key'] for obj in objects]
+    # explorer = {}
+    #
+    # for key in keys:
+    #     print('KEY', key)
+    #     sections = key.split('/')
+    #     cur_object = explorer
+    #     url = cloudfront_prefix
+    #     for url_section in sections:
+    #         url = url + '/' + url_section
+    #         if url_section not in cur_object:
+    #             cur_object[url_section] = {
+    #                 'name': url_section,
+    #                 'url_ext': url_section,
+    #                 'url': url,
+    #                 'children': {}
+    #             }
+    #         cur_object = cur_object[url_section]['children']
+
+    #     if section not in explorer.keys():
+    #         explorer[section] = {
+    #             'name': section,
+    #             'url_ext': section,
+    #             'url': cloudfront_prefix + section,
+    #             'children': {}
+    #         }
+    #         getChildren(explorer[section])
+    #
+    # print("EXPLORER:", explorer)
     return explorer
 
 

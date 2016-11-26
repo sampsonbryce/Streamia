@@ -1,9 +1,6 @@
 <ul>
     {% for name, value in tree.items %}
-        <li><a href="">{{ value.name }}</a>
-            {% if value.children|length > 0 %}
-                {% include 'videostream/explorersection.html' with tree=value.children %}
-            {% endif %}
+        <li><a href='#' class='load-link' data-url="{{ value.url_prefix }}">{{ value.name }}</a>
         </li>
     {% endfor %}
 </ul>
