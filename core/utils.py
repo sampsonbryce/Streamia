@@ -2,6 +2,69 @@ import hashlib
 import json
 
 import boto.elastictranscoder
+import boto3
+
+
+def getChildren(folder):
+    client = boto3.client('s3')
+    prefix = folder['url_ext']
+    print('PREFIX', prefix)
+
+    cloudfront_prefix = 'http://d2zi1eot6cm0a8.cloudfront.net/'
+
+    kwargs = {
+        'Bucket': 'streamingproject.hls',
+        'MaxKeys': 10,
+        'Prefix': prefix
+    }
+
+    response = client.list_objects_v2(**kwargs)
+    print(response.keys())
+
+    if 'Contents' in response.keys():
+        objects = [obj for obj in response['Contents']]
+        keys = [obj['Key'] for obj in objects]
+        for key in keys:
+            print('KEY:', key)
+            section = key[len(prefix):].split('/')[0]
+            print('SECTION:', section)
+            if section not in folder['children'].keys():
+                folder['children'][section] = {
+                    'name': section,
+                    'url_ext': folder['url_ext'] + section,
+                    'url': folder['url'] + section,
+                    'children': {}
+                }
+                getChildren(folder['children'][section])
+
+
+def getFileTree():
+    client = boto3.client('s3')
+
+    cloudfront_prefix = 'http://d2zi1eot6cm0a8.cloudfront.net/'
+
+    kwargs = {
+        'Bucket': 'streamingproject.hls',
+        'MaxKeys': 10,
+        'Prefix': 'transcoded/'
+    }
+    response = client.list_objects_v2(**kwargs)
+    objects = [obj for obj in response['Contents']]
+    keys = [obj['Key'] for obj in objects]
+    explorer = {}
+    for key in keys:
+        section = key.split('/')[0]
+        if section not in explorer.keys():
+            explorer[section] = {
+                'name': section,
+                'url_ext': section,
+                'url': cloudfront_prefix + section,
+                'children': {}
+            }
+            getChildren(explorer[section])
+
+    print("EXPLORER:", explorer)
+    return explorer
 
 
 def create_job():

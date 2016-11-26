@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Video Stream{% endblock %}</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/style.css' %}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.css" />
     {% block css_links %}
     {% endblock %}
@@ -15,7 +17,7 @@
             <a href="#" class="brand-logo">Streamia</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a href="#">Upload</a></li>
-                <li><a href="#">Videos</a></li>
+                <li><a href="{% url 'videostream:video-file-explorer' %}">Videos</a></li>
             </ul>
         </div>
     </nav>

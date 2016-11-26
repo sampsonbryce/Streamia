@@ -1,0 +1,6 @@
+/* begin flex-grid */
+.flex-Center{
+    display:flex;
+    justify-content: center;
+}
+/* end flex-grid */

@@ -1,0 +1,9 @@
+<ul>
+    {% for name, value in tree.items %}
+        <li><a href="">{{ value.name }}</a>
+            {% if value.children|length > 0 %}
+                {% include 'videostream/explorersection.html' with tree=value.children %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
